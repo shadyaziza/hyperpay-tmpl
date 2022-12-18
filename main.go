@@ -10,6 +10,7 @@ type templateData struct {
 	CheckoutID        string
 	CheckoutURL       string
 	CustomCheckoutURL string
+	RedirectURL       string
 	Total             float64
 }
 
@@ -29,7 +30,7 @@ func paymentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{"./ui/payment.tmpl.html"}
+	files := []string{"./ui/payment.tmpl.html", "./ui/redirect.tmpl.html"}
 
 	t, err := template.ParseFiles(files...)
 	if err != nil {
@@ -41,8 +42,10 @@ func paymentHandler(w http.ResponseWriter, r *http.Request) {
 	data := &templateData{
 		CheckoutID:        id,
 		CheckoutURL:       fmt.Sprintf(`https://eu-test.oppwa.com/v1/paymentWidgets.js?checkoutId=%s`, id),
-		CustomCheckoutURL: fmt.Sprintf(`"https://eu-test.oppwa.com/v1/checkouts/%s/payment"`, id),
-		Total:             1402.12,
+		CustomCheckoutURL: fmt.Sprintf(`https://eu-test.oppwa.com/v1/checkouts/%s/payment`, id),
+		RedirectURL:       `https://arcopayment.web.app`,
+
+		Total: 1402.12,
 	}
 	err = t.ExecuteTemplate(w, "payment", data)
 	if err != nil {
